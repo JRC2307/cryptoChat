@@ -1,5 +1,6 @@
 package com.server;
 
+import com.encrypt.*;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,6 +10,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class ServerThread extends Thread {
+  public static final String ANSI_RESET = "\u001B[0m";
+  public static final String ANSI_RED = "\u001B[31m";
+  public static final String ANSI_PURPLE = "\u001B[35m";
+  public static final String ANSI_CYAN = "\u001B[36m";
+  public static final String ANSI_WHITE = "\u001B[37m";
+
   private Socket s;
   private int id;
   private DataInputStream in;
@@ -23,33 +30,30 @@ public class ServerThread extends Thread {
     this.list=list;
   }
 
-  public ServerThread(){
-
-  }
-
   public void run(){
     try {
       in = new DataInputStream(s.getInputStream());
       out = new DataOutputStream(s.getOutputStream());
       exit = false;
       name = in.readUTF();
-      sendMessage(name + " contected");
+      sendMessage(ANSI_CYAN+ name + " contected"+ ANSI_RESET);
     }catch (IOException e) {
-      System.out.println("Error server thread");
+      System.out.println("Error server thread" +ANSI_RESET);
     }
     while(!exit){
       try {
         message = in.readUTF();
         if (message.equalsIgnoreCase("exit")) {
           exit = true;
-          sendMessage("  -" + name + " has been removed");
+          sendMessage(ANSI_RED + "  -" + name + " has been removed" + ANSI_RESET);
           removeClient();
         }else{
-          sendMessage("   -" + name + " wrote:" + message);
+          Caesar caesar = new Caesar();
+          message = caesar.parallelDecrypt(message);
+          sendMessage(ANSI_CYAN+"   -" + name + ANSI_RESET + " wrote:" + message);
         }
       }catch (Exception e){
-
-        System.out.println("Error in server thread while sending message io" );
+        System.out.println(ANSI_RED +"Error in server thread while sending message io" + ANSI_RESET);
         e.printStackTrace();
         break;
       }
