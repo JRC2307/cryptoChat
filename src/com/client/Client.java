@@ -17,7 +17,7 @@ public class Client {
   public static final String ANSI_PURPLE = "\u001B[35m";
   public static final String ANSI_CYAN = "\u001B[36m";
   public static final String ANSI_WHITE = "\u001B[37m";
-  public static final int port = 1234;
+  public static final int port = 1818;
   public static DataOutputStream out;
   public static BufferedReader in;
   //conection
@@ -32,14 +32,12 @@ public class Client {
   public static void main(String[] args){
     init();
     try {
+      System.out.println("This program is distributed in the hope that it will be useful\n"+
+      " but WITHOUT ANY WARRANTY; without even the implied warranty of" +
+      " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n" +
+      "See the GNU General Public License for more details.\n\n");
       System.out.println(ANSI_GREEN + "Welcome to cryptoChat a minimal and distraction free chat.\n");
       System.out.println("We really care about your privacy, therefore we don't log your conversations\n" + ANSI_RESET);
-
-      System.out.println(ANSI_PURPLE + "Here are some premade rooms for you, or you can create your own by typing '?roomname'" + ANSI_RESET);
-      System.out.println(ANSI_PURPLE + "\n?main\n?crypto\n?music\n?sports\n" + ANSI_RESET);
-
-
-      System.out.println("You are currently in the '?main' room. \n");
 
       System.out.println("Please input a nickname: ");
 
@@ -51,22 +49,20 @@ public class Client {
 
       out.writeUTF(name);
     }catch (IOException e){
-      System.out.println("There was an error with your nickname input");
+      System.out.println(ANSI_RED +"There was an error with your nickname input" + ANSI_RESET);
     }
-    
     while (!end){
       try {
         message=in.readLine();
-
+        //encrypt message
         Caesar caesar = new Caesar();
         message = caesar.parallelEncrypt(message);
-
         out.writeUTF(message);
         if (message.equalsIgnoreCase("exit")) {
           end = true;
         }
       }catch (IOException e){
-        System.out.println("Error in message loop");
+        System.out.println(ANSI_RED + "Error in message loop"+ ANSI_RESET);
       }
 
     }
@@ -85,3 +81,17 @@ public class Client {
   }
 
 }
+/*Copyright (C) <2018>  <Javier Rodríguez>
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>. */

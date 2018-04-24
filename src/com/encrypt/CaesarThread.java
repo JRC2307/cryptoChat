@@ -5,7 +5,7 @@ import java.util.concurrent.RecursiveTask;
 public class CaesarThread extends RecursiveTask<char[]> {
 
     private static final int THRESHOLD = 300;
-
+    private static final int shift = 7;
     int start;
     int end;
 
@@ -24,11 +24,11 @@ public class CaesarThread extends RecursiveTask<char[]> {
         int limit = end - start;
         if (limit < THRESHOLD) {
             for (int i = start; i < end; i++) {
-                char c = (char)(messageArray[i] + 7);
-                if (c > 'z')
-                    messageArray[i] = (char)(messageArray[i] - (26-7));
+                char c = (char)(messageArray[i] + shift);
+                if (c > 'a' && c < 'g')
+                    messageArray[i] = (char)(messageArray[i] + (26 - shift));
                 else
-                    messageArray[i] = (char)(messageArray[i] + 7);
+                    messageArray[i] = (char)(messageArray[i] + shift);
             }
         } else {
             int mid = (start + end) / 2;
@@ -43,3 +43,18 @@ public class CaesarThread extends RecursiveTask<char[]> {
     }
 
 }
+
+/*Copyright (C) <2018>  <Javier Rodríguez>
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>. */

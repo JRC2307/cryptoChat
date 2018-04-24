@@ -22,7 +22,7 @@ public class ServerThread extends Thread {
   private DataOutputStream out;
   private Users list;
   private boolean exit;
-  private String message, name;
+  private String message, name, welcome, removed;
 
   public ServerThread(Socket s, Users list, int id){
     this.s=s;
@@ -36,21 +36,29 @@ public class ServerThread extends Thread {
       out = new DataOutputStream(s.getOutputStream());
       exit = false;
       name = in.readUTF();
-      sendMessage(ANSI_CYAN+ name + " contected"+ ANSI_RESET);
+      welcome = ( name + " has connected\n");
+      //encrypt name and connected message
+      Caesar caesar = new Caesar();
+      welcome = caesar.parallelEncrypt(welcome);
+      sendMessage(welcome);
     }catch (IOException e) {
-      System.out.println("Error server thread" +ANSI_RESET);
+      System.out.println(ANSI_RED + "Error server thread" +ANSI_RESET);
     }
     while(!exit){
       try {
         message = in.readUTF();
+        Caesar caesar = new Caesar();
+        message = caesar.parallelDecrypt(message);
         if (message.equalsIgnoreCase("exit")) {
           exit = true;
-          sendMessage(ANSI_RED + "  -" + name + " has been removed" + ANSI_RESET);
+          removed = (name + " has been removed"+"\n");
+          removed = caesar.parallelEncrypt(removed);
+          sendMessage(removed);
           removeClient();
         }else{
-          Caesar caesar = new Caesar();
-          message = caesar.parallelDecrypt(message);
-          sendMessage(ANSI_CYAN+"   -" + name + ANSI_RESET + " wrote:" + message);
+          message = ("   -" + name + " wrote:" + message);
+          message = caesar.parallelEncrypt(message);
+          sendMessage(message+"\n");
         }
       }catch (Exception e){
         System.out.println(ANSI_RED +"Error in server thread while sending message io" + ANSI_RESET);
@@ -77,3 +85,18 @@ public class ServerThread extends Thread {
   }
 
 }
+
+/*Copyright (C) <2018>  <Javier Rodríguez>
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>. */
